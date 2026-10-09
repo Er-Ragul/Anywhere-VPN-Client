@@ -9,8 +9,7 @@ import {
   KeyboardAvoidingView, 
   Platform, 
   StatusBar,
-  Modal,
-  Alert
+  Modal
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -24,6 +23,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LottieView from 'lottie-react-native';
+import Alert from './Alert';
 
 export default function Register(){
 
@@ -31,6 +31,7 @@ export default function Register(){
   let [server, setServer] = useState(null)
   let [name, setName] = useState(null)
   let [loader, setLoader] = useState(false)
+  let [alert, setAlert] = useState({state: false, button: '', title: '', message: ''})
 
   let registerDevice = async() => {
     if(server != null && name != null){
@@ -46,15 +47,15 @@ export default function Register(){
           }
         })
         .catch(error => {
-          console.error('Error fetching data:', error);
+          setAlert({state: true, button: 'Retry', title: 'Oops!', message: 'Connection failed'})
         });
       }
       else{
-        console.log("Don't leave any fields empty!")
+        setAlert({state: true, button: 'Ok', title: 'Missing Required Fields', message: "Don't leave any fields empty!"})
       }
     }
     else{
-      console.log("Don't leave any fields empty!")
+      setAlert({state: true, button: 'Ok', title: 'Missing Required Fields', message: "Don't leave any fields empty!"})
     }
   }
 
@@ -81,6 +82,19 @@ export default function Register(){
       }]
       await AsyncStorage.setItem('networks', JSON.stringify(signatures));
       navigation.navigate('Connection')
+    }
+  }
+
+  let closeAlert = (state) => {
+    if(state == 'Ok'){
+      setAlert({state: false, button: '', title: '', message: ''})
+    }
+    else if(state == 'Retry'){
+      setAlert({state: false, button: '', title: '', message: ''})     
+      registerDevice()
+    }
+    else{
+      setAlert({state: false, button: '', title: '', message: ''})
     }
   }
 
@@ -230,15 +244,25 @@ export default function Register(){
 
                 {/* Version Info */}
                 <View className="mt-12 items-center">
-                  <Text className="text-zinc-700 text-xs font-semibold">
-                    Version 1.0.0
-                  </Text>
+                  <TouchableOpacity onPress={() => navigation.navigate('Connection')}>
+                    <Text className="text-white underline font-semibold">
+                      Back
+                    </Text>
+                  </TouchableOpacity>
                 </View>
 
               </View>
             </ScrollView>
           </KeyboardAvoidingView>
         </SafeAreaView>
+        <Modal
+          transparent
+          visible={alert.state}
+          animationType="fade"
+          statusBarTranslucent
+        >
+          <Alert title={alert.title} button={alert.button} message={alert.message} updateAlert={closeAlert} />
+        </Modal>
       </View>
     );
   }

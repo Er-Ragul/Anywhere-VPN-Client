@@ -6,7 +6,10 @@ import {
   SafeAreaView, 
   ScrollView, 
   Platform, 
-  StatusBar 
+  StatusBar,
+  Modal,
+  TouchableWithoutFeedback,
+  useWindowDimensions
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { 
@@ -19,26 +22,50 @@ import {
   ArrowDown, 
   Clock,
   ShieldPlus, 
-  ShieldCheck
+  ShieldCheck,
+  AlertTriangleIcon
 } from 'lucide-react-native';
 import axios from 'axios';
+import * as Font from 'expo-font';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import WireGuardModule from '../wireguard/WireGuardModule';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { updateDuration, updateTransfer, updateConnectivity } from '../redux/variableSlice';
+import Alert from './Alert';
 
 export default function VPN() {
 
   let dispatch = useDispatch()
   let connectivity = useSelector((state) => state.variable.connectivity)
   let [network, setNetwork] = useState(null)
+  let [transfer, setTransfer] = useState({Rx: [0, 'B'], Tx: [0, 'B']})
+  let [duration, setDuration] = useState('0')
+  let [alert, setAlert] = useState({state: false, button: '', title: '', message: ''})
   const lastStatsRef = useRef({ rx: 0, tx: 0, timestamp: Date.now() });
   const timerRef = useRef(null);
   const statsIntervalRef = useRef(null);
-  let [transfer, setTransfer] = useState({Rx: [0, 'B'], Tx: [0, 'B']})
-  let [duration, setDuration] = useState('0')
   const navigation = useNavigation()
+
+  useEffect(() => {
+    async function loadFonts() {
+      try {
+        await Font.loadAsync({
+          'Poppins-Black': require('./assets/fonts/Poppins-Black.ttf'),
+          'Poppins-Bold': require('./assets/fonts/Poppins-Bold.ttf'),
+          'Poppins-Light': require('./assets/fonts/Poppins-Light.ttf'),
+          'Poppins-Medium': require('./assets/fonts/Poppins-Medium.ttf'),
+          'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf')
+        });
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        console.log('Fonts loaded successfully');
+      }
+    }
+    loadFonts();
+  }, [])
+
 
   useEffect(() => {
 
@@ -150,8 +177,11 @@ export default function VPN() {
         }
       })
       .catch(error => {
-        console.error('Error fetching data:', error);
+        setAlert({state: true, button: 'Retry', title: 'Oops!', message: 'Connection failed'})
       })
+    }
+    else{
+      setAlert({state: true, button: 'Register', title: 'Server Not Found', message: 'Register your device on a server, then try again.'})
     }
   }
 
@@ -184,6 +214,20 @@ export default function VPN() {
     dispatch(updateConnectivity(false))
     clearInterval(timerRef.current);
     clearInterval(statsIntervalRef.current);
+  }
+
+  let closeAlert = (state) => {
+    if(state == 'Register'){
+      setAlert({state: false, button: '', title: '', message: ''})
+      navigation.navigate('Register')
+    }
+    else if(state == 'Retry'){
+      setAlert({state: false, button: '', title: '', message: ''})     
+      networkConnectivity()
+    }
+    else{
+      setAlert({state: false, button: '', title: '', message: ''})
+    }
   }
 
   // Formatted speed
@@ -332,6 +376,14 @@ export default function VPN() {
           <View className="w-32 h-1.5 bg-zinc-800 rounded-full" />
         </View>
       </SafeAreaView>
+    <Modal
+      transparent
+      visible={alert.state}
+      animationType="fade"
+      statusBarTranslucent
+    >
+      <Alert title={alert.title} button={alert.button} message={alert.message} updateAlert={closeAlert} />
+    </Modal>
     </LinearGradient>
   );
 }
