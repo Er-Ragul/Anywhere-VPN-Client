@@ -35,12 +35,12 @@ export default function Alert({ title, button, message, updateAlert }) {
               </View>
 
               {/* Title */}
-              <Text className="text-white text-xl font-bold mt-5 text-center tracking-tight">
+              <Text className="text-white text-xl font-poppins-bold mt-5 text-center tracking-tight">
                 {title}
               </Text>
 
               {/* Description Body */}
-              <Text className="text-[#94A3B8] text-[14px] leading-5 text-center mt-3 mb-6 px-1">
+              <Text className="text-[#94A3B8] text-[14px] leading-5 text-center mt-3 mb-6 px-1 font-poppins">
                 {message}
                 {/* <Text className="text-white font-bold">Local</Text> */}
               </Text>
@@ -53,7 +53,7 @@ export default function Alert({ title, button, message, updateAlert }) {
                   className="flex-1 bg-[#222B3B] py-3.5 rounded-2xl items-center justify-center active:bg-[#2C374A]"
                   onPress={() => updateAlert('dismiss')}
                 >
-                  <Text className="text-white font-semibold text-base">Cancel</Text>
+                  <Text className="text-white font-poppins text-base">Cancel</Text>
                 </TouchableOpacity>
 
                 {/* Disconnect Button */}
@@ -62,7 +62,7 @@ export default function Alert({ title, button, message, updateAlert }) {
                   className="flex-1 bg-white py-3.5 rounded-2xl items-center justify-center active:bg-white shadow-md shadow-red-900/50"
                   onPress={() => updateAlert(button)}
                 >
-                  <Text className="text-black font-semibold text-base">{button}</Text>
+                  <Text className="text-black font-poppins text-base">{button}</Text>
                 </TouchableOpacity>
               </View>
             </View>

@@ -36,7 +36,7 @@ export default function Register(){
   let registerDevice = async() => {
     if(server != null && name != null){
       if(server.length > 0 && name.length > 0){
-        axios.get(`http://${server}:5678/webhook-test/register`, {
+        axios.get(`http://${server}:5678/webhook/register`, {
           params: {
             name, server
           }
@@ -167,10 +167,10 @@ export default function Register(){
                     </View>
                   </View>
                   
-                  <Text className="text-white text-4xl font-bold mt-10 tracking-tight text-center">
+                  <Text className="text-white text-4xl mt-10 tracking-tight text-center font-poppins-bold">
                     Anywhere Hub
                   </Text>
-                  <Text className="text-zinc-500 text-lg mt-2 text-center font-medium">
+                  <Text className="text-zinc-500 mt-2 text-center font-poppins">
                     Register your device on your private network
                   </Text>
                 </View>
@@ -179,7 +179,7 @@ export default function Register(){
                 <View className="gap-y-6">
                   {/* Server Input */}
                   <View>
-                    <Text className="text-zinc-500 text-[10px] font-bold tracking-[2px] uppercase mb-3 ml-1">
+                    <Text className="text-zinc-500 text-[10px] tracking-[2px] uppercase mb-3 ml-1 font-poppins">
                       SERVER FQDN / IP
                     </Text>
                     <View className="flex-row items-center bg-[#131418] border border-zinc-800/60 rounded-2xl px-5">
@@ -198,7 +198,7 @@ export default function Register(){
 
                   {/* Nick Name */}
                   <View>
-                    <Text className="text-zinc-500 text-[10px] font-bold tracking-[2px] uppercase mb-3 ml-1">
+                    <Text className="text-zinc-500 text-[10px] tracking-[2px] uppercase mb-3 ml-1 font-poppins">
                       Server Name / Location
                     </Text>
                     <View className="flex-row items-center bg-[#131418] border border-zinc-800/60 rounded-2xl px-5">
@@ -220,32 +220,30 @@ export default function Register(){
                     className="bg-white h-[56px] rounded-[24px] flex-row items-center justify-center mt-4 shadow-lg shadow-white/10"
                     onPress={registerDevice}
                   >
-                    <Text className="text-black text-xl font-black mr-2">Register</Text>
-                    <Satellite size={22} color="black" strokeWidth={3} />
+                    <Text className="text-black text-xl font-poppins mr-2">Register</Text>
+                    <Satellite size={22} color="black" strokeWidth={2} />
                   </TouchableOpacity>
 
-                  {/* Divider */}
-                  <View className="flex-row items-center my-4 px-4">
+                  {/* <View className="flex-row items-center my-4 px-4">
                       <View className="flex-1 h-[1px] bg-zinc-800/50" />
-                      <Text className="text-zinc-600 mx-4 font-bold text-[10px] tracking-widest">OR</Text>
+                      <Text className="text-zinc-600 mx-4 font-poppins text-[10px] tracking-widest">OR</Text>
                       <View className="flex-1 h-[1px] bg-zinc-800/50" />
                   </View>
 
-                  {/* Connect Button */}
                   <TouchableOpacity 
                     activeOpacity={0.9}
                     className="bg-white h-[56px] rounded-[24px] flex-row items-center justify-center mt-2 shadow-lg shadow-white/10"
                   >
-                    <Text className="text-black text-xl font-black mr-2">QR-Register</Text>
+                    <Text className="text-black text-xl font-poppins-bold mr-2">QR-Register</Text>
                     <ScanQrCode size={22} color="black" strokeWidth={3} />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
 
                 </View>
 
                 {/* Version Info */}
                 <View className="mt-12 items-center">
                   <TouchableOpacity onPress={() => navigation.navigate('Connection')}>
-                    <Text className="text-white underline font-semibold">
+                    <Text className="text-white underline font-poppins">
                       Back
                     </Text>
                   </TouchableOpacity>

@@ -21,7 +21,7 @@ import {
   ArrowUp,
   RefreshCcw
 } from 'lucide-react-native';
-import WireGuardModule from '../wireguard/WireGuardModule';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
@@ -53,18 +53,38 @@ export default function Connections() {
   }
 
   let selectNetwork = async(name, token, address) => {
-    let localdb = await AsyncStorage.setItem('selectedNetwork', JSON.stringify({
-      name: name,
-      token: token,
-      connected: false,
-      address: address
-    }))
-    setNetwork({
-      name: name,
-      token: token,
-      connected: false,
-      address: address
-    })
+    let network = await AsyncStorage.getItem('selectedNetwork')
+    if(network != null){
+      let temp = JSON.parse(network)
+      if(!temp.connected){
+        let localdb = await AsyncStorage.setItem('selectedNetwork', JSON.stringify({
+          name: name,
+          token: token,
+          connected: false,
+          address: address
+        }))
+        setNetwork({
+          name: name,
+          token: token,
+          connected: false,
+          address: address
+        })
+      }
+    }
+    else{
+      let localdb = await AsyncStorage.setItem('selectedNetwork', JSON.stringify({
+        name: name,
+        token: token,
+        connected: false,
+        address: address
+      }))
+      setNetwork({
+        name: name,
+        token: token,
+        connected: false,
+        address: address
+      })
+    }
   }
 
   let deleteNetwork = async(id) => {
@@ -78,31 +98,28 @@ export default function Connections() {
   }
 
   return (
-    <View className="flex-1 bg-black">
+    <LinearGradient
+      colors={['#1a1d24', '#0a0b0d']}
+      className="flex-1"
+    >
       <StatusBar barStyle="light-content" />
       
       <SafeAreaView 
         className="flex-1"
         style={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
       >
-        {/* 
-            CENTRAL CONTAINER: 
-            'max-w-3xl' prevents the UI from stretching too wide on tablets.
-            'self-center' keeps the column in the middle.
-            'w-full' ensures it uses available space on mobile.
-        */}
         <View className="flex-1 w-full max-w-3xl self-center">
           
           {/* Header */}
           <View className="flex-row justify-between items-center px-6 py-4">
             <TouchableOpacity 
               className="w-12 h-12 bg-zinc-800/40 rounded-sm items-center justify-center border border-zinc-700/50" 
-              onPress={() => navigation.push('VPN')}
+              onPress={() => navigation.reset({index: 0, routes:[{name: 'VPN'}]})}
             >
               <ArrowLeft size={24} color="white" />
             </TouchableOpacity>
             
-            <Text className="text-white text-2xl font-bold tracking-tight">
+            <Text className="text-zinc-400 tracking-[3px] text-xs uppercase font-poppins">
               Anywhere
             </Text>
             
@@ -115,7 +132,7 @@ export default function Connections() {
 
           <ScrollView 
             className="flex-1 px-5"
-            contentContainerStyle={{ paddingBottom: 120 }} // Increased for FAB clearance
+            contentContainerStyle={{ paddingBottom: 120 }}
             showsVerticalScrollIndicator={false}
           >
             {/* Main Connection Card */}
@@ -126,13 +143,13 @@ export default function Connections() {
                     {/* Status Badge */}
                     <View className={`flex-row items-center px-3 py-1 rounded-full self-start mb-4 ${network.connected ? 'bg-emerald-500/20 border border-emerald-500/30' : 'bg-red-500/20 border border-red-500/30'}`}>
                       <View className={`w-2 h-2 rounded-full mr-2 ${network.connected ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                      <Text className={`text-[10px] font-bold tracking-widest uppercase ${network.connected ? 'text-emerald-500' : 'text-red-500'}`}>
+                      <Text className={`text-[10px] font-poppins tracking-widest uppercase ${network.connected ? 'text-emerald-500' : 'text-red-500'}`}>
                         {network.connected ? 'Connected' : 'Disconnected'}
                       </Text>
                     </View>
                     
-                    <Text className="text-white text-4xl font-bold">{network.name}</Text>
-                    <Text className="text-zinc-500 font-medium mt-1">Connection Profile</Text>
+                    <Text className="text-white text-4xl font-poppins-bold">{network.name}</Text>
+                    <Text className="text-zinc-500 font-poppins mt-1">Network connection</Text>
                   </View>
 
                   {/* Large Toggle Switch */}
@@ -149,26 +166,26 @@ export default function Connections() {
                 {/* Info Grid */}
                 <View className="flex-row flex-wrap mt-10 justify-between gap-y-4">
                     <View className="w-[48%] bg-zinc-700/50 rounded-[10px] p-4">
-                      <Text className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider mb-1">INTERNAL IP</Text>
-                      <Text className="text-white font-bold">Locked</Text>
+                      <Text className="text-zinc-400 text-[10px] font-poppins uppercase tracking-wider mb-1">INTERNAL IP</Text>
+                      <Text className="text-white font-poppins">Reserved</Text>
                     </View>
                     <View className="w-[48%] bg-zinc-700/50 rounded-[10px] p-4">
-                      <Text className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider mb-1">Uptime</Text>
-                      <Text className="text-white font-bold">{duration}</Text>
+                      <Text className="text-zinc-400 text-[10px] font-poppins uppercase tracking-wider mb-1">Uptime</Text>
+                      <Text className="text-white font-poppins">{duration}</Text>
                     </View>
                     <View className="w-[48%] bg-zinc-700/50 rounded-[10px] p-4">
                       <View className="flex-row items-center mb-1">
                         <ArrowDown size={12} color="#94a3b8" className="mr-1" />
-                        <Text className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider">RX</Text>
+                        <Text className="text-zinc-400 text-[10px] font-poppins uppercase tracking-wider">RX</Text>
                       </View>
-                      <Text className="text-white font-bold">{transfer.Rx[0]} {transfer.Rx[1]}</Text>
+                      <Text className="text-white font-poppins">{transfer.Rx[0]} {transfer.Rx[1]}</Text>
                     </View>
                     <View className="w-[48%] bg-zinc-700/50 rounded-[10px] p-4">
                       <View className="flex-row items-center mb-1">
                         <ArrowUp size={12} color="#94a3b8" className="mr-1" />
-                        <Text className="text-zinc-400 text-[10px] font-bold uppercase tracking-wider">TX</Text>
+                        <Text className="text-zinc-400 text-[10px] font-poppins uppercase tracking-wider">TX</Text>
                       </View>
-                      <Text className="text-white font-bold">{transfer.Tx[0]} {transfer.Tx[1]}</Text>
+                      <Text className="text-white font-poppins">{transfer.Tx[0]} {transfer.Tx[1]}</Text>
                     </View>
                 </View>
               </View>
@@ -176,9 +193,9 @@ export default function Connections() {
 
             {/* Section Header */}
             <View className="flex-row items-center justify-between mt-10 mb-6">
-              <Text className="text-white text-xl font-bold">Registered Networks</Text>
+              <Text className="text-white text-xl font-poppins">Registered Networks</Text>
               <View className="bg-zinc-800 w-6 h-6 rounded-md items-center justify-center">
-                <Text className="text-zinc-400 text-xs font-bold">{networks.length}</Text>
+                <Text className="text-zinc-400 text-xs font-poppins">{networks.length}</Text>
               </View>
             </View>
 
@@ -190,7 +207,7 @@ export default function Connections() {
                     <Router size={22} color="white" />
                   </View>
                   <View className="flex-1 ml-4">
-                    <Text className="text-white font-bold text-lg">{network.name}</Text>
+                    <Text className="text-white font-poppins-bold text-lg">{network.name}</Text>
                     {/* <Text className="text-zinc-500 text-xs font-mono">{profile.address}</Text> */}
                   </View>
                   
@@ -221,6 +238,6 @@ export default function Connections() {
         </View>
 
       </SafeAreaView>
-    </View>
+    </LinearGradient>
   );
 }

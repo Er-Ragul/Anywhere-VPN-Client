@@ -26,7 +26,6 @@ import {
   AlertTriangleIcon
 } from 'lucide-react-native';
 import axios from 'axios';
-import * as Font from 'expo-font';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import WireGuardModule from '../wireguard/WireGuardModule';
@@ -46,26 +45,6 @@ export default function VPN() {
   const timerRef = useRef(null);
   const statsIntervalRef = useRef(null);
   const navigation = useNavigation()
-
-  useEffect(() => {
-    async function loadFonts() {
-      try {
-        await Font.loadAsync({
-          'Poppins-Black': require('./assets/fonts/Poppins-Black.ttf'),
-          'Poppins-Bold': require('./assets/fonts/Poppins-Bold.ttf'),
-          'Poppins-Light': require('./assets/fonts/Poppins-Light.ttf'),
-          'Poppins-Medium': require('./assets/fonts/Poppins-Medium.ttf'),
-          'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf')
-        });
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        console.log('Fonts loaded successfully');
-      }
-    }
-    loadFonts();
-  }, [])
-
 
   useEffect(() => {
 
@@ -162,7 +141,7 @@ export default function VPN() {
 
       await WireGuardModule.disconnect('Local');
 
-      axios.get(`http://${network.address}:5678/webhook-test/${!api ? 'connect' : 'disconnect'}`, {
+      axios.get(`http://${network.address}:5678/webhook/${!api ? 'connect' : 'disconnect'}`, {
         headers: {
           'Authorization': `Bearer ${network.token}`,
           'Content-Type': 'application/json'
@@ -259,12 +238,8 @@ export default function VPN() {
         className="flex-1"
         style={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
       >
-        {/* 
-            HEADER WRAPPER: 
-            max-w-2xl and self-center ensures it stays centered on tablets.
-        */}
         <View className="w-full max-w-2xl self-center flex-row justify-center items-center px-6 py-4">
-          <Text className="text-zinc-400 font-bold tracking-[3px] text-xs uppercase">
+          <Text className="text-zinc-400 tracking-[3px] text-xs uppercase font-poppins">
             Anywhere
           </Text>
         </View>
@@ -273,22 +248,18 @@ export default function VPN() {
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
         >
-          {/* 
-              CONTENT WRAPPER:
-              All body content is now inside this centering container.
-          */}
           <View className="w-full max-w-2xl self-center">
             
             {/* Status Section */}
             <View className="items-center mt-6">
               <View className="flex-row items-center bg-emerald-500/10 border border-emerald-500/30 px-4 py-1.5 rounded-full mb-6">
                 <View className="w-2 h-2 rounded-full bg-emerald-400 mr-2" />
-                <Text className="text-emerald-400 text-[10px] font-bold tracking-widest uppercase">
+                <Text className="text-emerald-400 text-[10px] tracking-widest uppercase font-poppins-regular">
                   Encrypted
                 </Text>
               </View>
               
-              <Text className="text-white text-5xl font-bold tracking-tight text-center">
+              <Text className="text-white text-5xl tracking-tight text-center font-poppins-medium">
                 { connectivity != null && connectivity == true ? 'Connected' : 'Disconnected' }
               </Text>
             </View>
@@ -328,10 +299,10 @@ export default function VPN() {
                   network != null ? <ShieldCheck size={32} color="#ffffff" /> : <ShieldX size={32} color="#ffffff" />
                 }
                 <View className="flex-1 ml-4">
-                  <Text className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase mb-0.5">
+                  <Text className="text-zinc-500 text-[10px] tracking-widest uppercase mb-0.5 font-poppins-regular">
                     Selected Network
                   </Text>
-                  <Text className="text-white text-lg font-bold">
+                  <Text className="text-white text-lg font-poppins-bold">
                     { network != null ? network.name : 'Not Found' }
                   </Text>
                 </View>
@@ -369,12 +340,10 @@ export default function VPN() {
               </View>
             </View>
           </View>
+          <View className="mt-12 items-center">
+            <Text className="text-zinc-600 font-poppins">Version 0.0.1</Text>
+          </View>
         </ScrollView>
-
-        {/* Bottom Home Indicator Bar */}
-        <View className="items-center pb-4">
-          <View className="w-32 h-1.5 bg-zinc-800 rounded-full" />
-        </View>
       </SafeAreaView>
     <Modal
       transparent
